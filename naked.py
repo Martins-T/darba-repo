@@ -19,14 +19,16 @@ dt = datetime.now()
 request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
 print("Generated today's date: " + str(request_date))
 
-
+# Requesting info from NASA API
 print("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
 r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 
+# Printing NASA request response data
 print("Response status code: " + str(r.status_code))
 print("Response headers: " + str(r.headers))
 print("Response content: " + str(r.text))
 
+# If status code 200 collect data into safe and hazardous asteroid arrays
 if r.status_code == 200:
 
 	json_data = json.loads(r.text)
@@ -34,10 +36,12 @@ if r.status_code == 200:
 	ast_safe = []
 	ast_hazardous = []
 
+# If element count present print asteroid count
 	if 'element_count' in json_data:
 		ast_count = int(json_data['element_count'])
 		print("Asteroid count today: " + str(ast_count))
 
+# If asteroid count is more than 0 analyze their diameter, distance and velocity
 		if ast_count > 0:
 			for val in json_data['near_earth_objects'][request_date]:
 				if 'name' and 'nasa_jpl_url' and 'estimated_diameter' and 'is_potentially_hazardous_asteroid' and 'close_approach_data' in val:
@@ -100,7 +104,7 @@ if r.status_code == 200:
 	print("Hazardous asteorids: " + str(len(ast_hazardous)) + " | Safe asteroids: " + str(len(ast_safe)))
 
 	if len(ast_hazardous) > 0:
-
+# Sort hazardous asteroids by the closest passing distance
 		ast_hazardous.sort(key = lambda x: x[4], reverse=False)
 
 		print("Today's possible apocalypse (asteroid impact on earth) times:")
