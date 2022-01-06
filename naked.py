@@ -64,7 +64,9 @@ if r.status_code == 200:
 		if ast_count > 0:
 			for val in json_data['near_earth_objects'][request_date]:
 				if 'name' and 'nasa_jpl_url' and 'estimated_diameter' and 'is_potentially_hazardous_asteroid' and 'close_approach_data' in val:
+					# Getting name of asteroid
 					tmp_ast_name = val['name']
+					# Getting url of asteroid description
 					tmp_ast_nasa_jpl_url = val['nasa_jpl_url']
 					if 'kilometers' in val['estimated_diameter']:
 						if 'estimated_diameter_min' and 'estimated_diameter_max' in val['estimated_diameter']['kilometers']:
@@ -123,13 +125,14 @@ if r.status_code == 200:
 	logger.info ("Hazardous asteorids: " + str(len(ast_hazardous)) + " | Safe asteroids: " + str(len(ast_safe)))
 
 	if len(ast_hazardous) > 0:
-# Sort hazardous asteroids by the closest passing distance
+# Sort hazardous asteroids by the time of earliest possible impact on earth
 		ast_hazardous.sort(key = lambda x: x[4], reverse=False)
 
 		logger.info("Today's possible apocalypse (asteroid impact on earth) times:")
 		for asteroid in ast_hazardous:
 			 (str(asteroid[6]) + " " + str(asteroid[0]) + " " + " | more info: " + str(asteroid[1]))
 
+# Sort hazardous asteroids by the closest passing distance
 		ast_hazardous.sort(key = lambda x: x[8], reverse=False)
 		logger.info("Closest passing distance is for: " + str(ast_hazardous[0][0]) + " at: " + str(int(ast_hazardous[0][8])) + " km | more info: " + str(ast_hazardous[0][1]))
 	else:
